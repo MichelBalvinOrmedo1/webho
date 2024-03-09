@@ -56,7 +56,10 @@ export class WebhooksService {
     }
   }
 
-  private async handleMessage(senderPsid: string, receivedMessage: any) {
+  private async handleMessage(
+    senderPsid: string,
+    receivedMessage: any,
+  ): Promise<any> {
     let response;
     const responseHist = receivedMessage.reply_to !== undefined;
 
@@ -66,7 +69,7 @@ export class WebhooksService {
       };
       // Enviar cada tipo de mensaje uno por uno
       for (const message of response.messages) {
-        await this.callSendAPI(senderPsid, message);
+        return await this.callSendAPI(senderPsid, message);
       }
       console.log('Hola respuesta');
     } else if (responseHist) {
@@ -76,8 +79,11 @@ export class WebhooksService {
         ['hola'], // Palabras claves
         '18096464938399091', // Id del historial seleccionada
       );
+    } else {
+      return null;
     }
     console.log('Hola respuesta2');
+    return await this.callSendAPI(senderPsid, response);
   }
 
   private async handlePostback(senderPsid: string, receivedPostback: any) {
