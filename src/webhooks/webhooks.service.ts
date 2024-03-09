@@ -1,9 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import { genericTemplate } from './function/plantillaGenery';
-import { getButtonTem } from './function/plantillaBotones';
-import { getCoupon } from './function/plantillaCoupon';
-import { mediaTemplate } from './function/plantillaMedia';
 import { responseHistory } from './function/responseHistories';
 
 @Injectable()
@@ -25,7 +21,8 @@ export class WebhooksService {
         this.logger.log('PSID del remitente: ' + senderPsid);
 
         if (webhookEvent.message && !webhookEvent.is_echo) {
-          await this.handleMessage(senderPsid, webhookEvent.message);
+          const mensaje = await this.handleMessage(webhookEvent.message);
+          await this.callSendAPI(senderPsid, mensaje);
           break;
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
@@ -47,44 +44,24 @@ export class WebhooksService {
     const response = { text: message };
     await this.callSendAPI(recipientId, response);
   }
-  async handleOpenThreadReferral(senderPsid: string, referral: any) {
-    const refParam = referral.ref;
-    // Aquí puedes personalizar la respuesta según el valor de refParam
-    if (refParam === 'prom') {
-      await this.sendMessage(senderPsid, 'Todas las promociones disponibles');
-    } else {
-      await this.sendMessage(senderPsid, '¡Hola! ¿En qué puedo ayudarte hoy?');
-    }
-  }
 
-  private async handleMessage(
-    senderPsid: string,
-    receivedMessage: any,
-  ): Promise<any> {
+  private async handleMessage(receivedMessage: any): Promise<any> {
     let response;
     const responseHist = receivedMessage.reply_to !== undefined;
 
     if (receivedMessage.text && !responseHist) {
       response = {
-        messages: [{ text: 'Primer mensaje de texto' }],
+        text: 'Primer mensaje de texto',
       };
-      // Enviar cada tipo de mensaje uno por uno
-      for (const message of response.messages) {
-        await this.callSendAPI(senderPsid, message);
-      }
-      console.log('Hola respuesta');
     } else if (responseHist) {
       response = responseHistory(
-        receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
-        receivedMessage.text, // Palabra que mando el usuario
-        ['hola'], // Palabras claves
-        '18096464938399091', // Id del historial seleccionada
+        receivedMessage.reply_to.story.id,
+        receivedMessage.text,
+        ['hola'],
+        '18096464938399091',
       );
-    } else {
-      return null;
     }
-    console.log('Hola respuesta2');
-    return await this.callSendAPI(senderPsid, response);
+    return response;
   }
 
   private async handlePostback(senderPsid: string, receivedPostback: any) {
