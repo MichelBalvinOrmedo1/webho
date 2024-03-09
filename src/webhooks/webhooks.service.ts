@@ -26,6 +26,7 @@ export class WebhooksService {
 
         if (webhookEvent.message && !webhookEvent.is_echo) {
           await this.handleMessage(senderPsid, webhookEvent.message);
+          break;
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
         } else {
@@ -69,7 +70,7 @@ export class WebhooksService {
       };
       // Enviar cada tipo de mensaje uno por uno
       for (const message of response.messages) {
-        return await this.callSendAPI(senderPsid, message);
+        await this.callSendAPI(senderPsid, message);
       }
       console.log('Hola respuesta');
     } else if (responseHist) {
