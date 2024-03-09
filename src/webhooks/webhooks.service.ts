@@ -12,9 +12,6 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     if (body.object === 'instagram') {
-      const entryCount = body.entry.length;
-      let currentIndex = 0;
-
       for (const entry of body.entry) {
         const webhookEvent = entry.messaging[0];
         this.logger.log(
@@ -64,12 +61,10 @@ export class WebhooksService {
 
     if (receivedMessage.text && !responseHist) {
       response = {
-        messages: [{ text: 'Primer mensaje de texto' }],
+        text: 'hola',
       };
       // Enviar cada tipo de mensaje uno por uno
-      for (const message of response.messages) {
-        await this.callSendAPI(senderPsid, message);
-      }
+      return this.callSendAPI(senderPsid, response);
     } else if (responseHist) {
       response = responseHistory(
         receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
@@ -78,7 +73,6 @@ export class WebhooksService {
         '18096464938399091', // Id del historial seleccionada
       );
     }
-    response;
   }
 
   private async handlePostback(senderPsid: string, receivedPostback: any) {
