@@ -17,7 +17,10 @@ export class WebhooksService {
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
         );
-
+        // Verificar si es un evento de eco
+        if (webhookEvent.is_echo) {
+          continue; // Saltar al próximo evento si es un evento de eco
+        }
         const senderPsid = webhookEvent.sender.id;
         this.logger.log('PSID del remitente: ' + senderPsid);
 
@@ -61,10 +64,12 @@ export class WebhooksService {
 
     if (receivedMessage.text && !responseHist) {
       response = {
-        text: 'hola',
+        messages: [{ text: 'Primer mensaje de texto' }],
       };
       // Enviar cada tipo de mensaje uno por uno
-      return this.callSendAPI(senderPsid, response);
+      for (const message of response.messages) {
+        await this.callSendAPI(senderPsid, message);
+      }
     } else if (responseHist) {
       response = responseHistory(
         receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
