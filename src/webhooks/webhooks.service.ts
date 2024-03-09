@@ -26,7 +26,7 @@ export class WebhooksService {
 
         if (webhookEvent.message && !webhookEvent.is_echo) {
           const mensaje = await this.handleMessage(webhookEvent.message);
-          this.callSendAPI(senderPsid, mensaje);
+          await this.callSendAPI(senderPsid, mensaje);
           break;
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
