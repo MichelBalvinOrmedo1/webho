@@ -24,17 +24,7 @@ export class WebhooksService {
         const senderPsid = webhookEvent.sender.id;
         this.logger.log('PSID del remitente: ' + senderPsid);
 
-        // Verificar si es el último elemento del array
-        if (++currentIndex === entryCount) {
-          break; // Salir del bucle si es el último elemento
-        }
-
-        if (
-          webhookEvent.message &&
-          !webhookEvent.is_echo &&
-          webhookEvent.sender &&
-          webhookEvent.sender.id
-        ) {
+        if (webhookEvent.message) {
           await this.handleMessage(senderPsid, webhookEvent.message);
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
