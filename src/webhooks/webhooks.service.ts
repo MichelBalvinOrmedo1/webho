@@ -163,6 +163,10 @@ export class WebhooksService {
     if (!PAGE_ACCESS_TOKEN) {
       this.logger.error('Error: PAGE_ACCESS_TOKEN no está configurado.');
       return;
+    } // Validar el PSID del remitente antes de enviar el mensaje
+    if (!senderPsid) {
+      this.logger.error('Error: PSID del remitente no válido.');
+      return;
     }
 
     const requestBody = {
