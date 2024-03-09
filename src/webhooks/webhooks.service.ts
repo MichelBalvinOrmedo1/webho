@@ -12,7 +12,7 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     if (body.object === 'instagram') {
-      body.entry.forEach(async (entry: { messaging: any[] }) => {
+      for (const entry of body.entry) {
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
@@ -35,9 +35,9 @@ export class WebhooksService {
             'Evento no manejado: ' + JSON.stringify(webhookEvent),
           );
         }
-      });
+      }
 
-      return 'EVENTO_RECIBIDO';
+      return;
     } else {
       this.logger.log('Tipo de objeto no admitido: ' + body.object);
       return 'OBJETO_NO_ADMITIDO';
@@ -66,11 +66,7 @@ export class WebhooksService {
 
     if (receivedMessage.text && !responseHist) {
       response = {
-        messages: [
-          { text: 'Primer mensaje de texto' },
-
-          { text: 'Segundo mensaje de texto' },
-        ],
+        messages: [{ text: 'Primer mensaje de texto' }],
       };
       // Enviar cada tipo de mensaje uno por uno
       for (const message of response.messages) {
@@ -84,6 +80,7 @@ export class WebhooksService {
         '18096464938399091', // Id del historial seleccionada
       );
     }
+    response;
   }
 
   private async handlePostback(senderPsid: string, receivedPostback: any) {
