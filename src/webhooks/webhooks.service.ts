@@ -24,7 +24,7 @@ export class WebhooksService {
         const senderPsid = webhookEvent.sender.id;
         this.logger.log('PSID del remitente: ' + senderPsid);
 
-        if (webhookEvent.message) {
+        if (webhookEvent.message && !webhookEvent.is_echo) {
           await this.handleMessage(senderPsid, webhookEvent.message);
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
@@ -58,9 +58,7 @@ export class WebhooksService {
 
   private async handleMessage(senderPsid: string, receivedMessage: any) {
     let response;
-    console.log(receivedMessage.reply_to);
     const responseHist = receivedMessage.reply_to !== undefined;
-    console.log(responseHist);
 
     if (receivedMessage.text && !responseHist) {
       response = {
@@ -70,6 +68,7 @@ export class WebhooksService {
       for (const message of response.messages) {
         await this.callSendAPI(senderPsid, message);
       }
+      console.log('Hola respuesta');
     } else if (responseHist) {
       response = responseHistory(
         receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
@@ -78,6 +77,7 @@ export class WebhooksService {
         '18096464938399091', // Id del historial seleccionada
       );
     }
+    console.log('Hola respuesta2');
   }
 
   private async handlePostback(senderPsid: string, receivedPostback: any) {
