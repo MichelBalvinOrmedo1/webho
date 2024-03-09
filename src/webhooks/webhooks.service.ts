@@ -11,6 +11,8 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
+    console.log(JSON.stringify(body));
+
     if (body.object === 'instagram') {
       for (const entry of body.entry) {
         const webhookEvent = entry.messaging[0];
@@ -21,7 +23,7 @@ export class WebhooksService {
         if (webhookEvent.is_echo) {
           break; // Saltar al próximo evento si es un evento de eco
         }
-        console.log(webhookEvent);
+        console.log(JSON.stringify(webhookEvent));
 
         const senderPsid = webhookEvent.sender.id;
         this.logger.log('PSID del remitente: ' + senderPsid);
@@ -64,8 +66,6 @@ export class WebhooksService {
     senderPsid: string,
     receivedMessage: any,
   ): Promise<any> {
-    console.log('Enviar Mensaje : ');
-
     let response;
     const responseHist = receivedMessage.reply_to !== undefined;
 
@@ -74,7 +74,6 @@ export class WebhooksService {
         text: 'Primer mensaje de texto',
       };
       const enviar = await this.callSendAPI(senderPsid, response);
-      console.log(enviar);
     } else if (responseHist) {
       response = responseHistory(
         receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
@@ -85,7 +84,6 @@ export class WebhooksService {
     } else {
       return null;
     }
-    console.log(receivedMessage);
 
     return;
   }
