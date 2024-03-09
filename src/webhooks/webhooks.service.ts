@@ -12,6 +12,9 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     if (body.object === 'instagram') {
+      const entryCount = body.entry.length;
+      let currentIndex = 0;
+
       for (const entry of body.entry) {
         const webhookEvent = entry.messaging[0];
         this.logger.log(
@@ -20,6 +23,11 @@ export class WebhooksService {
 
         const senderPsid = webhookEvent.sender.id;
         this.logger.log('PSID del remitente: ' + senderPsid);
+
+        // Verificar si es el último elemento del array
+        if (++currentIndex === entryCount) {
+          break; // Salir del bucle si es el último elemento
+        }
 
         if (
           webhookEvent.message &&
