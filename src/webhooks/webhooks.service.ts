@@ -25,7 +25,8 @@ export class WebhooksService {
         this.logger.log('PSID del remitente: ' + senderPsid);
 
         if (webhookEvent.message && !webhookEvent.is_echo) {
-          await this.handleMessage(senderPsid, webhookEvent.message);
+          const mensaje = await this.handleMessage(webhookEvent.message);
+          this.callSendAPI(senderPsid, mensaje);
           break;
         } else if (webhookEvent.postback) {
           await this.handlePostback(senderPsid, webhookEvent.postback);
@@ -57,10 +58,7 @@ export class WebhooksService {
     }
   }
 
-  private async handleMessage(
-    senderPsid: string,
-    receivedMessage: any,
-  ): Promise<any> {
+  private async handleMessage(receivedMessage: any): Promise<any> {
     let response;
     const responseHist = receivedMessage.reply_to !== undefined;
 
