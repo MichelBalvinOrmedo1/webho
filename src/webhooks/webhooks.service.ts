@@ -12,7 +12,7 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     if (body.object === 'instagram') {
-      for (const entry of body.entry) {
+      body.entry.forEach(async (entry: { messaging: any[] }) => {
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
@@ -35,7 +35,7 @@ export class WebhooksService {
             'Evento no manejado: ' + JSON.stringify(webhookEvent),
           );
         }
-      }
+      });
 
       return 'EVENTO_RECIBIDO';
     } else {
@@ -156,14 +156,13 @@ export class WebhooksService {
   }
 
   private async callSendAPI(senderPsid: string, response: object) {
-    // Mostrar acción de typing_off después de enviar el mensaje
-
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     if (!PAGE_ACCESS_TOKEN) {
       this.logger.error('Error: PAGE_ACCESS_TOKEN no está configurado.');
       return;
-    } // Validar el PSID del remitente antes de enviar el mensaje
+    }
+
     if (!senderPsid) {
       this.logger.error('Error: PSID del remitente no válido.');
       return;
@@ -177,11 +176,20 @@ export class WebhooksService {
     try {
       const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
       const apiResponse = await axios.post(url, requestBody);
-      this.logger.log('Mensaje enviado: ' + JSON.stringify(apiResponse.data));
+
+      if (apiResponse.data.error) {
+        // Si se encuentra un error en la respuesta de la API, manejarlo adecuadamente
+        this.logger.error(
+          'Error al enviar el mensaje:',
+          apiResponse.data.error,
+        );
+      } else {
+        // Si no hay error, se considera que el mensaje fue enviado exitosamente
+        this.logger.log('Mensaje enviado correctamente.');
+      }
     } catch (error) {
-      this.logger.error(
-        'Error al enviar el mensaje: ' + JSON.stringify(error.response.data),
-      );
+      // Capturar errores de red u otros errores durante la solicitud
+      this.logger.error('Error al enviar el mensaje:', error.message);
     }
   }
 }
