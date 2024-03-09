@@ -19,7 +19,7 @@ export class WebhooksService {
         );
         // Verificar si es un evento de eco
         if (webhookEvent.is_echo) {
-          continue; // Saltar al próximo evento si es un evento de eco
+          break; // Saltar al próximo evento si es un evento de eco
         }
         console.log(webhookEvent);
 
@@ -27,7 +27,7 @@ export class WebhooksService {
         this.logger.log('PSID del remitente: ' + senderPsid);
 
         if (webhookEvent.message && !webhookEvent.is_echo) {
-          const a = await this.handleMessage(senderPsid, webhookEvent.message);
+          await this.handleMessage(senderPsid, webhookEvent.message);
 
           break;
         } else if (webhookEvent.postback) {
@@ -69,7 +69,7 @@ export class WebhooksService {
     let response;
     const responseHist = receivedMessage.reply_to !== undefined;
 
-    if (receivedMessage.text && !responseHist) {
+    if (receivedMessage.text && !responseHist && !receivedMessage.is_echo) {
       response = {
         text: 'Primer mensaje de texto',
       };
