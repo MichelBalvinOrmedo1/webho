@@ -30,26 +30,32 @@ export class AuthService {
     }
   }
   async getRedirectUrl(@Req() req) {
-    // Verifica que req.query exista antes de intentar acceder a sus propiedades
-    if (!req.query || !req.query.code) {
-      throw new Error('El parámetro "code" no está presente en la solicitud.');
-    }
-
-    // Extrae el código de la solicitud
     const { code } = req.query;
 
-    // Obtiene el token de acceso de Facebook utilizando el código de autorización
-    const accessToken = await this.getAccesToken(code);
+    try {
+      const { data } = await axios.get(
+        'https://graph.facebook.com/v19.0/oauth/access_token',
+        {
+          params: {
+            client_id: this.clientId,
+            client_secret: this.clientSecret,
+            redirect_uri: this.redirectUri,
+            code: code,
+          },
+        },
+      );
 
-    // Obtiene la información del usuario utilizando el token de acceso
-    const data = await this.getPageInfo(accessToken);
+      // Aquí obtienes el token de acceso
+      const accessToken = data.access_token;
+      console.log('Token de acceso:', accessToken);
 
-    // Imprime la información del usuario
-    console.log('Data', data);
-    console.log(accessToken);
+      // Ahora puedes utilizar el token de acceso para hacer solicitudes a la API de Facebook en nombre del usuario
 
-    // Redirigir a la página de éxito de inicio de sesión con el token JWT como parámetro de consulta
-    return { url: `/login-success` };
+      return { url: '/login-success' };
+    } catch (error) {
+      console.error('Error al obtener el token de acceso:', error.message);
+      throw new Error('Error al obtener el token de acceso');
+    }
   }
   // Obtener Informacion de la pagina de facebook del usuario
   private async getPageInfo(accessToken: string): Promise<any> {
