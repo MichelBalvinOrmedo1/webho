@@ -38,4 +38,9 @@ export class WebhooksController {
   handleWebhook(@Body() body: any) {
     return this.webhooksService.handleWebhook(body);
   }
+  @Post('/webhooks') // Define que esta función manejará las solicitudes POST
+  async handleWebhook2(@Body() body: any) {
+    // Llama al servicio para manejar la lógica de la solicitud de webhook
+    return await this.webhooksService.handleWebhook2(body);
+  }
 }

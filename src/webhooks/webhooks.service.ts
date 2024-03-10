@@ -73,7 +73,7 @@ export class WebhooksService {
       response = {
         text: 'Primer mensaje de texto',
       };
-      const enviar = await this.callSendAPI(senderPsid, response);
+      await this.callSendAPI(senderPsid, response);
     } else if (responseHist) {
       response = responseHistory(
         receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
@@ -190,5 +190,15 @@ export class WebhooksService {
       // Capturar errores de red u otros errores durante la solicitud
       this.logger.error('Error al enviar el mensaje:', error);
     }
+  }
+  async handleWebhook2(body: any): Promise<any> {
+    // Aquí implementa la lógica para manejar las solicitudes de webhook
+    console.log('Solicitud recibida en la URL de callback:');
+    console.log(body); // Aquí puedes procesar los datos de la solicitud
+
+    // Puedes realizar cualquier procesamiento adicional aquí
+
+    // Responde a la plataforma externa si es necesario
+    return 'OK';
   }
 }
