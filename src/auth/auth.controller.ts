@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('facebook')
+  @Get('/facebook')
   @Redirect() // Indica que este método devuelve una redirección HTTP
   async loginWithFacebook(@Req() req): Promise<any> {
     // Obtener la URL de autenticación de Facebook
@@ -13,7 +13,7 @@ export class AuthController {
 
     return { url: redirectUrl };
   }
-  @Get('facebook/redirect')
+  @Get('/facebook/redirect')
   @Redirect() // Indica que este método devuelve una redirección HTTP
   async handleInstagramRedirect(@Req() req): Promise<any> {
     return this.authService.getRedirectUrl(req);
