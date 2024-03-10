@@ -49,7 +49,9 @@ export class AuthService {
       const accessToken = data.access_token;
       console.log('Token de acceso:', accessToken);
 
-      // Ahora puedes utilizar el token de acceso para hacer solicitudes a la API de Facebook en nombre del usuario
+      // PAge
+      const page = await this.getUserPages(accessToken);
+      console.log(page);
 
       return { url: '/login-success' };
     } catch (error) {
@@ -67,6 +69,19 @@ export class AuthService {
     } catch (error) {
       throw new Error(
         'Error al obtener información de la página de Facebook Business',
+      );
+    }
+  }
+  // Método para obtener las páginas de usuario
+  private async getUserPages(accessToken: string): Promise<any> {
+    try {
+      const response = await axios.get(
+        `https://graph.facebook.com/v19.0/me/accounts?access_token=${accessToken}`,
+      );
+      return response.data.data;
+    } catch (error) {
+      throw new Error(
+        'Error al obtener la lista de páginas de Facebook asociadas al usuario',
       );
     }
   }
