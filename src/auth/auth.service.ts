@@ -3,8 +3,8 @@ import axios from 'axios';
 
 @Injectable()
 export class AuthService {
-  private readonly clientId = '423249216825011';
-  private readonly clientSecret = '9da73d9e6c98bcc058703bffebaf5a4f';
+  private readonly clientId = '350452607906496';
+  private readonly clientSecret = '987d40ac35486ec2798bda6877a1824e';
   private readonly redirectUri =
     'https://webho.onrender.com/auth/facebook/redirect';
   private readonly scope =
