@@ -102,7 +102,7 @@ export class AuthService {
 
     try {
       const response = await axios.post(url, params);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('Error al suscribirse al evento:', error);
       throw new Error('Error al suscribirse al evento');
