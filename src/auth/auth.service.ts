@@ -53,6 +53,12 @@ export class AuthService {
       const page = await this.getUserPages(accessToken);
       console.log(page);
 
+      const subcripcion = await this.upSubcripcionEvento(
+        page[1].access_token,
+        page[1].id,
+      );
+      console.log(subcripcion);
+
       return { url: '/login-success' };
     } catch (error) {
       console.error('Error al obtener el token de acceso:', error.message);
@@ -76,13 +82,30 @@ export class AuthService {
   private async getUserPages(accessToken: string): Promise<any> {
     try {
       const response = await axios.get(
-        `https://graph.facebook.com/v19.0/me/accounts?access_token=${accessToken}`,
+        `https://graph.facebook.com/v19.0/me/accounts?fields=id,access_token&access_token=${accessToken}`,
       );
       return response.data.data;
     } catch (error) {
       throw new Error(
         'Error al obtener la lista de páginas de Facebook asociadas al usuario',
       );
+    }
+  }
+
+  private async upSubcripcionEvento(accessTokenPage: string, idPage: string) {
+    const url = `https://graph.facebook.com/${idPage}/subscribed_apps`;
+    const params = {
+      subscribed_fields:
+        'messages,messaging_account_linking,message_deliveries,message_echoes,messaging_game_plays,messaging_optins,messaging_payments,messaging_policy_enforcement,messaging_postbacks,messaging_referrals',
+      access_token: accessTokenPage,
+    };
+
+    try {
+      const response = await axios.post(url, params);
+      return response;
+    } catch (error) {
+      console.error('Error al suscribirse al evento:', error);
+      throw new Error('Error al suscribirse al evento');
     }
   }
 }
