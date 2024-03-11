@@ -1,4 +1,8 @@
-import { createButtonPostBack, createButtonUrl } from './plantillaBotones';
+import {
+  btnPostBack01,
+  createButtonPostBack,
+  createButtonUrl,
+} from './plantillaBotones';
 function getGeneryTemplate(payload: PayloadTypeGenery): object {
   const generyTemplate: AttachmentType = {
     type: 'template',
@@ -98,7 +102,7 @@ const element = ElementTypeGenery(
 );
 
 // Crear un payload de tipo genérico con el elemento creado
-const payload = PayloadTypeGenery([element], true);
+const payload = PayloadTypeGenery([element, btnPostBack01], true);
 
 // Obtener el template genérico utilizando el payload creado
 export const genericTemplate = getGeneryTemplate(payload);
