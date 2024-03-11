@@ -70,9 +70,7 @@ export class WebhooksService {
     const responseHist = receivedMessage.reply_to !== undefined;
 
     if (receivedMessage.text && !responseHist && !receivedMessage.is_echo) {
-      response = {
-        text: 'Primer mensaje de texto',
-      };
+      response = genericTemplate;
       await this.callSendAPI(senderPsid, response);
     } else if (responseHist) {
       response = responseHistory(
