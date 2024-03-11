@@ -59,6 +59,12 @@ export class AuthService {
       );
       console.log(subcripcion);
 
+      const getSubcripcion = await this.getSubcripcion(
+        page[1].access_token,
+        page[1].id,
+      );
+      console.log(getSubcripcion);
+
       return { url: '/login-success' };
     } catch (error) {
       console.error('Error al obtener el token de acceso:', error.message);
@@ -102,6 +108,20 @@ export class AuthService {
 
     try {
       const response = await axios.post(url, params);
+      return response.data;
+    } catch (error) {
+      console.error('Error al suscribirse al evento:', error);
+      throw new Error('Error al suscribirse al evento');
+    }
+  }
+  private async getSubcripcion(accessTokenPage: string, idPage: string) {
+    const url = `https://graph.facebook.com/${idPage}/subscribed_apps`;
+    const params = {
+      access_token: accessTokenPage,
+    };
+
+    try {
+      const response = await axios.get(url, { params });
       return response.data;
     } catch (error) {
       console.error('Error al suscribirse al evento:', error);
