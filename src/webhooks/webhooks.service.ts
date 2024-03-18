@@ -80,8 +80,10 @@ export class WebhooksService {
   private async handlePostChange(webhookEvent: any, mensajeEnviado: any) {
     // Verificar si el cambio se refiere a un comentario
     console.log(webhookEvent.value);
-    const ID_INSTAGRAM = '17841464140324633';
-    if (webhookEvent.field === 'comments') {
+    if (
+      webhookEvent.field === 'comments' &&
+      mensajeEnviado !== webhookEvent.value.id
+    ) {
       console.log(webhookEvent.value);
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
       return await this.callSendAPIComentari(webhookEvent.value.id);
