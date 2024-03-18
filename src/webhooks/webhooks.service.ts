@@ -15,6 +15,24 @@ export class WebhooksService {
 
     if (body.object === 'instagram') {
       for (const entry of body.entry) {
+        // Iterar sobre los eventos en la entrada del webhook
+        for (const change of entry.changes) {
+          // Verificar si el cambio es un comentario
+          if (change.field === 'comments') {
+            // Manejar el evento de comentario
+            const commentId = change.value.comment_id;
+            const mediaId = change.value.media_id;
+            const commentText = change.value.text;
+            const senderId = change.value.from.id;
+
+            // Lógica para manejar el evento de comentario
+            console.log(
+              `Nuevo comentario en la publicación ${mediaId}: ${commentText}`,
+            );
+
+            // Puedes realizar acciones adicionales aquí, como almacenar el comentario en una base de datos, enviar notificaciones, etc.
+          }
+        }
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
@@ -188,15 +206,5 @@ export class WebhooksService {
       // Capturar errores de red u otros errores durante la solicitud
       this.logger.error('Error al enviar el mensaje:', error);
     }
-  }
-  async handleWebhook2(body: any): Promise<any> {
-    // Aquí implementa la lógica para manejar las solicitudes de webhook
-    console.log('Solicitud recibida en la URL de callback:');
-    console.log(body); // Aquí puedes procesar los datos de la solicitud
-
-    // Puedes realizar cualquier procesamiento adicional aquí
-
-    // Responde a la plataforma externa si es necesario
-    return 'OK';
   }
 }

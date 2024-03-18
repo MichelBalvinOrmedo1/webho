@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { WebhooksModule } from './webhooks/webhooks.module';
 import { AuthModule } from './auth/auth.module';
+import { ConversationModule } from './conversation/conversation.module';
 
 @Module({
-  imports: [WebhooksModule, AuthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [WebhooksModule, AuthModule, ConversationModule],
+  controllers: [],
+  providers: [  ],
 })
 export class AppModule {}
