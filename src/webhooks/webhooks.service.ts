@@ -74,10 +74,7 @@ export class WebhooksService {
   // Manejar el evento de webhook para cambios en las publicaciones
   private async handlePostChange(webhookEvent: any) {
     // Verificar si el cambio se refiere a un comentario
-    if (
-      webhookEvent.field === 'feed' &&
-      webhookEvent.changes.some((change: any) => change.field === 'comments')
-    ) {
+    if (webhookEvent.field === 'comments') {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent);
       // Aquí puedes agregar la lógica para manejar el evento de comentario
