@@ -17,7 +17,9 @@ export class WebhooksService {
       for (const entry of body.entry) {
         // Iterar sobre los eventos en la entrada del webhook
         console.log(entry);
-
+        for (const webhookEvent of entry.changes) {
+          await this.handlePostChange(webhookEvent);
+        }
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
@@ -62,6 +64,18 @@ export class WebhooksService {
       await this.sendMessage(senderPsid, 'Todas las promociones disponibles');
     } else {
       await this.sendMessage(senderPsid, '¡Hola! ¿En qué puedo ayudarte hoy?');
+    }
+  }
+  // Manejar el evento de webhook para cambios en las publicaciones
+  private async handlePostChange(webhookEvent: any) {
+    // Verificar si el cambio se refiere a un comentario
+    if (
+      webhookEvent.field === 'feed' &&
+      webhookEvent.changes.some((change: any) => change.field === 'comments')
+    ) {
+      // Manejar el evento de comentario
+      console.log('Se recibió un evento de comentario:', webhookEvent);
+      // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
   }
 
