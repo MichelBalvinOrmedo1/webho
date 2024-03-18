@@ -77,7 +77,7 @@ export class WebhooksService {
     if (webhookEvent.field === 'comments') {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
-      //await this.callSendAPIComentari(webhookEvent.value.id);
+      await this.callSendAPIComentari(webhookEvent.value.id);
 
       // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
@@ -218,13 +218,8 @@ export class WebhooksService {
       return;
     }
 
-    if (!idComentario) {
-      this.logger.error('No existe Id');
-      return;
-    }
-
     const requestBody = {
-      recipient: 'Hola Como estas',
+      message: 'Hola Como estas',
     };
 
     try {
