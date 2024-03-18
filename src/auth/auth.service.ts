@@ -65,7 +65,7 @@ export class AuthService {
       );
       console.log(getSubcripcion);
 
-      return { url: '/login-success' };
+      return { url: '/login-success?access_token = ' + page[1].access_token };
     } catch (error) {
       console.error('Error al obtener el token de acceso:', error.message);
       throw new Error('Error al obtener el token de acceso');
