@@ -81,14 +81,10 @@ export class WebhooksService {
     // Verificar si el cambio se refiere a un comentario
     console.log(webhookEvent.value);
     const ID_INSTAGRAM = '17841464140324633';
-    if (webhookEvent.field === 'comments' && ID_INSTAGRAM !== mensajeEnviado) {
-      // Manejar el evento de comentario
-      console.log(webhookEvent.value.from.id);
-
+    if (webhookEvent.field === 'comments') {
+      console.log(webhookEvent.value);
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
       return await this.callSendAPIComentari(webhookEvent.value.id);
-
-      // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
   }
 
