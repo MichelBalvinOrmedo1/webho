@@ -16,23 +16,8 @@ export class WebhooksService {
     if (body.object === 'instagram') {
       for (const entry of body.entry) {
         // Iterar sobre los eventos en la entrada del webhook
-        for (const change of entry.changes) {
-          // Verificar si el cambio es un comentario
-          if (change.field === 'comments') {
-            // Manejar el evento de comentario
-            const commentId = change.value.comment_id;
-            const mediaId = change.value.media_id;
-            const commentText = change.value.text;
-            const senderId = change.value.from.id;
+        console.log(entry);
 
-            // Lógica para manejar el evento de comentario
-            console.log(
-              `Nuevo comentario en la publicación ${mediaId}: ${commentText}`,
-            );
-
-            // Puedes realizar acciones adicionales aquí, como almacenar el comentario en una base de datos, enviar notificaciones, etc.
-          }
-        }
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
