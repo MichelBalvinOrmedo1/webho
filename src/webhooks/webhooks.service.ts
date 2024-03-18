@@ -24,7 +24,7 @@ export class WebhooksService {
 
           for (const change of entry.changes) {
             if (change.field === 'comments') {
-              await this.handlePostChange(change, entry[0].id);
+              await this.handlePostChange(change, entry.id);
             }
           }
         }
