@@ -83,6 +83,11 @@ export class WebhooksService {
 
       // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
+    if (webhookEvent.value.parent_id) {
+      // Manejar el evento de comentario
+      console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
+      return await this.callSendAPIComentari(webhookEvent.value.id);
+    }
   }
 
   private async handleMessage(
@@ -225,7 +230,11 @@ export class WebhooksService {
     };
 
     try {
+      //instagram
       const url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
+
+      //Facebook
+      //const url = `https://graph.facebook.com/v19.0/${idComentario}/comments?access_token=${PAGE_ACCESS_TOKEN}`;
       const apiResponse = await axios.post(url, requestBody);
 
       if (apiResponse.data.error) {
