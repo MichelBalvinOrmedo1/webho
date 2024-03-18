@@ -20,32 +20,34 @@ export class WebhooksService {
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
           for (const change of entry.changes) {
-            await this.handlePostChange(change);
+            await this.handlePostChange(change[0]);
           }
         }
-        const webhookEvent = entry.messaging[0];
-        this.logger.log(
-          'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
-        );
-        // Verificar si es un evento de eco
-        if (webhookEvent.is_echo) {
-          break; // Saltar al próximo evento si es un evento de eco
-        }
-        console.log(JSON.stringify(webhookEvent));
-
-        const senderPsid = webhookEvent.sender.id;
-        this.logger.log('PSID del remitente: ' + senderPsid);
-
-        if (webhookEvent.message && !webhookEvent.is_echo) {
-          await this.handleMessage(senderPsid, webhookEvent.message);
-
-          break;
-        } else if (webhookEvent.postback) {
-          await this.handlePostback(senderPsid, webhookEvent.postback);
-        } else {
+        if (entry.messaging) {
+          const webhookEvent = entry.messaging[0];
           this.logger.log(
-            'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
           );
+          // Verificar si es un evento de eco
+          if (webhookEvent.is_echo) {
+            break; // Saltar al próximo evento si es un evento de eco
+          }
+          console.log(JSON.stringify(webhookEvent));
+
+          const senderPsid = webhookEvent.sender.id;
+          this.logger.log('PSID del remitente: ' + senderPsid);
+
+          if (webhookEvent.message && !webhookEvent.is_echo) {
+            await this.handleMessage(senderPsid, webhookEvent.message);
+
+            break;
+          } else if (webhookEvent.postback) {
+            await this.handlePostback(senderPsid, webhookEvent.postback);
+          } else {
+            this.logger.log(
+              'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            );
+          }
         }
       }
 
