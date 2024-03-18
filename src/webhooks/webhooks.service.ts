@@ -24,7 +24,7 @@ export class WebhooksService {
 
           for (const change of entry.changes) {
             if (change.field === 'comments') {
-              await this.handlePostChange(change, entry[0]);
+              await this.handlePostChange(change, entry[0].id);
             }
           }
         }
@@ -80,8 +80,8 @@ export class WebhooksService {
   private async handlePostChange(webhookEvent: any, mensajeEnviado: any) {
     // Verificar si el cambio se refiere a un comentario
     console.log(webhookEvent.value);
-
-    if (webhookEvent.field === 'comments') {
+    const ID_INSTAGRAM = '17841464140324633';
+    if (webhookEvent.field === 'comments' && ID_INSTAGRAM !== mensajeEnviado) {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
       return await this.callSendAPIComentari(webhookEvent.value.id);
