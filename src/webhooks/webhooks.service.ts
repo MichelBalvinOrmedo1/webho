@@ -19,9 +19,12 @@ export class WebhooksService {
         console.log(entry);
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
+          // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
+          let mensajeEnviado = false;
+
           for (const change of entry.changes) {
             if (change.field === 'comments') {
-              await this.handlePostChange(change);
+              await this.handlePostChange(change, mensajeEnviado);
             }
           }
         }
@@ -74,19 +77,14 @@ export class WebhooksService {
     }
   }
   // Manejar el evento de webhook para cambios en las publicaciones
-  private async handlePostChange(webhookEvent: any) {
+  private async handlePostChange(webhookEvent: any, mensajeEnviado: boolean) {
     // Verificar si el cambio se refiere a un comentario
-    if (webhookEvent.field === 'comments' && !webhookEvent.value.parent_id) {
+    if (webhookEvent.field === 'comments' && !mensajeEnviado) {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
       return await this.callSendAPIComentari(webhookEvent.value.id);
 
       // Aquí puedes agregar la lógica para manejar el evento de comentario
-    }
-    if (webhookEvent.value.parent_id) {
-      // Manejar el evento de comentario
-      console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
-      return await this.callSendAPIComentari(webhookEvent.value.id);
     }
   }
 
