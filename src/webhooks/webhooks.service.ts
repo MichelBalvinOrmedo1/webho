@@ -20,8 +20,6 @@ export class WebhooksService {
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
           for (const change of entry.changes) {
-            console.log(change);
-
             await this.handlePostChange(change);
           }
         }
@@ -79,6 +77,8 @@ export class WebhooksService {
     if (webhookEvent.field === 'comments') {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent);
+      await this.callSendAPIComentari(webhookEvent.value.id);
+
       // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
   }
@@ -196,6 +196,39 @@ export class WebhooksService {
 
     try {
       const url = `https://graph.facebook.com/v19.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+      const apiResponse = await axios.post(url, requestBody);
+
+      if (apiResponse.data.error) {
+        // Si se encuentra un error en la respuesta de la API, manejarlo adecuadamente
+        this.logger.error('Error al enviar el mensaje:', apiResponse.data);
+      } else {
+        // Si no hay error, se considera que el mensaje fue enviado exitosamente
+        this.logger.log('Mensaje enviado correctamente.');
+      }
+    } catch (error) {
+      // Capturar errores de red u otros errores durante la solicitud
+      this.logger.error('Error al enviar el mensaje:', error);
+    }
+  }
+  private async callSendAPIComentari(idComentario: string) {
+    const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
+
+    if (!PAGE_ACCESS_TOKEN) {
+      this.logger.error('Error: PAGE_ACCESS_TOKEN no está configurado.');
+      return;
+    }
+
+    if (!idComentario) {
+      this.logger.error('No existe Id');
+      return;
+    }
+
+    const requestBody = {
+      recipient: 'Hola Como estas',
+    };
+
+    try {
+      const url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
       const apiResponse = await axios.post(url, requestBody);
 
       if (apiResponse.data.error) {
