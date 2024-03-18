@@ -77,9 +77,10 @@ export class WebhooksService {
     }
   }
   // Manejar el evento de webhook para cambios en las publicaciones
-  private async handlePostChange(webhookEvent: any, mensajeEnviado: boolean) {
+  private async handlePostChange(webhookEvent: any, mensajeEnviado: any) {
     // Verificar si el cambio se refiere a un comentario
     console.log(webhookEvent.value);
+    console.log(mensajeEnviado);
 
     if (webhookEvent.field === 'comments' && !webhookEvent.value.parent_id) {
       if (webhookEvent.value.from.id != webhookEvent.value.to.id)
