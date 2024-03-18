@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { genericTemplate } from './function/plantillaGenery';
 import { getButtonTem } from './function/plantillaBotones';
@@ -20,8 +20,10 @@ export class WebhooksService {
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
           for (const change of entry.changes) {
-            await this.handlePostChange(change);
-            break;
+            if (change.field === 'comments') {
+              await this.handlePostChange(change);
+              break; // Solo manejar el primer cambio de comentario y luego salir del bucle
+            }
           }
         }
         if (entry.messaging) {
@@ -230,10 +232,12 @@ export class WebhooksService {
       if (apiResponse.data.error) {
         // Si se encuentra un error en la respuesta de la API, manejarlo adecuadamente
         this.logger.error('Error al enviar el mensaje:', apiResponse.data);
+        return new BadRequestException();
       } else {
         // Si no hay error, se considera que el mensaje fue enviado exitosamente
         this.logger.log('Mensaje enviado correctamente.');
       }
+      return apiResponse;
     } catch (error) {
       // Capturar errores de red u otros errores durante la solicitud
       this.logger.error('Error al enviar el mensaje:', error);
