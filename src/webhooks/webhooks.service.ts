@@ -17,8 +17,11 @@ export class WebhooksService {
       for (const entry of body.entry) {
         // Iterar sobre los eventos en la entrada del webhook
         console.log(entry);
-        for (const webhookEvent of entry.changes) {
-          await this.handlePostChange(webhookEvent);
+        // Manejar los eventos de cambios en publicaciones
+        if (entry.changes) {
+          for (const change of entry.changes) {
+            await this.handlePostChange(change);
+          }
         }
         const webhookEvent = entry.messaging[0];
         this.logger.log(
