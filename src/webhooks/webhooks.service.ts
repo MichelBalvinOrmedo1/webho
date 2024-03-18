@@ -20,7 +20,9 @@ export class WebhooksService {
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
           for (const change of entry.changes) {
-            await this.handlePostChange(change[0]);
+            console.log(change);
+
+            await this.handlePostChange(change);
           }
         }
         if (entry.messaging) {
