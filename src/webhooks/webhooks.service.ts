@@ -21,6 +21,7 @@ export class WebhooksService {
         if (entry.changes) {
           for (const change of entry.changes) {
             await this.handlePostChange(change);
+            break;
           }
         }
         if (entry.messaging) {
@@ -77,7 +78,7 @@ export class WebhooksService {
     if (webhookEvent.field === 'comments') {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
-      await this.callSendAPIComentari(webhookEvent.value.id);
+      return await this.callSendAPIComentari(webhookEvent.value.id);
 
       // Aquí puedes agregar la lógica para manejar el evento de comentario
     }
