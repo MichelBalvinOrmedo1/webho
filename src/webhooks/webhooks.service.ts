@@ -82,7 +82,7 @@ export class WebhooksService {
     console.log(webhookEvent.value);
     if (
       webhookEvent.field === 'comments' &&
-      mensajeEnviado !== webhookEvent.value.id
+      mensajeEnviado !== webhookEvent.value.from.id
     ) {
       console.log(webhookEvent.value);
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
