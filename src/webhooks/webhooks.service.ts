@@ -22,7 +22,6 @@ export class WebhooksService {
           for (const change of entry.changes) {
             if (change.field === 'comments') {
               await this.handlePostChange(change);
-              break; // Solo manejar el primer cambio de comentario y luego salir del bucle
             }
           }
         }
@@ -77,7 +76,7 @@ export class WebhooksService {
   // Manejar el evento de webhook para cambios en las publicaciones
   private async handlePostChange(webhookEvent: any) {
     // Verificar si el cambio se refiere a un comentario
-    if (webhookEvent.field === 'comments') {
+    if (webhookEvent.field === 'comments' && !webhookEvent.value.parent_id) {
       // Manejar el evento de comentario
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
       return await this.callSendAPIComentari(webhookEvent.value.id);
