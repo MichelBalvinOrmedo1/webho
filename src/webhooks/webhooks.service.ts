@@ -13,7 +13,51 @@ export class WebhooksService {
   async handleWebhook(body: any) {
     console.log(JSON.stringify(body));
 
-    return;
+    if (body.object === 'instagram' || body.object === 'page') {
+      for (const entry of body.entry) {
+        if (entry.changes) {
+          for (const change of entry.changes) {
+            if (change.field === 'comments' || change.field === 'feed') {
+              //Opciones a Que publiacion quiere;
+              if (change.value.media.id === 'MEDIA_ID') {
+              }
+              await this.handlePostChange(change, entry.id, body.object);
+            }
+          }
+        }
+        if (entry.messaging) {
+          const webhookEvent = entry.messaging[0];
+          this.logger.log(
+            'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
+          );
+          // Verificar si es un evento de eco
+          if (webhookEvent.is_echo) {
+            break; // Saltar al próximo evento si es un evento de eco
+          }
+          console.log(JSON.stringify(webhookEvent));
+
+          const senderPsid = webhookEvent.sender.id;
+          this.logger.log('PSID del remitente: ' + senderPsid);
+
+          if (webhookEvent.message && !webhookEvent.is_echo) {
+            await this.handleMessage(senderPsid, webhookEvent.message);
+
+            break;
+          } else if (webhookEvent.postback) {
+            await this.handlePostback(senderPsid, webhookEvent.postback);
+          } else {
+            this.logger.log(
+              'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            );
+          }
+        }
+      }
+
+      return;
+    } else {
+      this.logger.log('Tipo de objeto no admitido: ' + body.object);
+      return 'OBJETO_NO_ADMITIDO';
+    }
   }
 
   async sendMessage(recipientId: string, message: string) {

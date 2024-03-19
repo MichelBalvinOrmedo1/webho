@@ -8,7 +8,7 @@ export class AuthService {
   private readonly redirectUri =
     'https://webho.onrender.com/auth/facebook/redirect';
   private readonly scope =
-    'email,business_management,read_insights,pages_read_user_content,instagram_basic,catalog_management,instagram_content_publish,instagram_manage_comments,instagram_manage_messages,pages_messaging,pages_manage_metadata,pages_manage_engagement,pages_show_list  ';
+    'email,business_management,read_insights,pages_read_user_content,instagram_basic,catalog_management,instagram_content_publish,instagram_manage_comments,instagram_manage_messages,pages_messaging,pages_manage_metadata,pages_manage_engagement,pages_show_list,pages_read_engagement';
 
   // Método para obtener la URL de autenticación de Facebook
   async getFacebookAuthUrl(): Promise<string> {
