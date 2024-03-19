@@ -13,18 +13,20 @@ export class WebhooksService {
   async handleWebhook(body: any) {
     console.log(JSON.stringify(body));
 
-    if (body.object === 'instagram') {
+    if (body.object === 'instagram' || body.object === 'page') {
       for (const entry of body.entry) {
         // Iterar sobre los eventos en la entrada del webhook
         console.log(entry);
         // Manejar los eventos de cambios en publicaciones
         if (entry.changes) {
           // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
-          let mensajeEnviado = false;
 
           for (const change of entry.changes) {
-            if (change.field === 'comments') {
-              await this.handlePostChange(change, entry.id);
+            if (change.field === 'comments' || change.field === 'feed') {
+              //Opciones a Que publiacion quiere;
+              if (change.value.media.id === 'MEDIA_ID') {
+              }
+              await this.handlePostChange(change, entry.id, body.object);
             }
           }
         }
@@ -77,16 +79,18 @@ export class WebhooksService {
     }
   }
   // Manejar el evento de webhook para cambios en las publicaciones
-  private async handlePostChange(webhookEvent: any, mensajeEnviado: any) {
+  private async handlePostChange(
+    webhookEvent: any,
+    mensajeEnviado: any,
+    typeObject: any,
+  ) {
     // Verificar si el cambio se refiere a un comentario
-    console.log(webhookEvent.value);
     if (
-      webhookEvent.field === 'comments' &&
-      mensajeEnviado !== webhookEvent.value.from.id
+      mensajeEnviado !== webhookEvent.value.from.id &&
+      !webhookEvent.value.parent_id
     ) {
-      console.log(webhookEvent.value);
       console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
-      return await this.callSendAPIComentari(webhookEvent.value.id);
+      return await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
     }
   }
 
@@ -217,7 +221,7 @@ export class WebhooksService {
       this.logger.error('Error al enviar el mensaje:', error);
     }
   }
-  private async callSendAPIComentari(idComentario: string) {
+  private async callSendAPIComentari(idComentario: string, typeObject: string) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     if (!PAGE_ACCESS_TOKEN) {
@@ -230,11 +234,15 @@ export class WebhooksService {
     };
 
     try {
+      let url;
       //instagram
-      const url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
-
+      if (typeObject === 'instagram') {
+        url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
+      } else if (typeObject === 'page') {
+        url = `https://graph.facebook.com/v19.0/${idComentario}/comments?access_token=${PAGE_ACCESS_TOKEN}`;
+      }
       //Facebook
-      //const url = `https://graph.facebook.com/v19.0/${idComentario}/comments?access_token=${PAGE_ACCESS_TOKEN}`;
+      //
       const apiResponse = await axios.post(url, requestBody);
 
       if (apiResponse.data.error) {
