@@ -12,6 +12,8 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     console.log(JSON.stringify(body));
+
+    return;
   }
 
   async sendMessage(recipientId: string, message: string) {
