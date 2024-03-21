@@ -19,7 +19,8 @@ export class WebhooksService {
           for (const change of entry.changes) {
             if (change.field === 'comments' || change.field === 'feed') {
               //Opciones a Que publiacion quiere;
-              /*if (change.value.media.id === 'MEDIA_ID') {
+              /*
+              if (change.value.media.id === 'MEDIA_ID') {
               }*/
 
               await this.handlePostChange(change, entry.id, body.object);
@@ -230,16 +231,13 @@ export class WebhooksService {
     };
 
     try {
-      let url;
-      //instagram
-      if (typeObject === 'instagram') {
-        url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
-      } else if (typeObject === 'page') {
-        url = `https://graph.facebook.com/v19.0/${idComentario}/comments?access_token=${PAGE_ACCESS_TOKEN}`;
-      }
+      console.log(typeObject);
+
+      const url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
+      const apiResponse = await axios.post(url, requestBody);
+
       //Facebook
       //
-      const apiResponse = await axios.post(url, requestBody);
 
       if (apiResponse.data.error) {
         // Si se encuentra un error en la respuesta de la API, manejarlo adecuadamente
