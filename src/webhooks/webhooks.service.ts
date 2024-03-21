@@ -11,20 +11,9 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
-    console.log(JSON.stringify(body));
-    // Procesar el evento recibido
-    const entry = body.entry[0];
-    const changes = entry.changes;
-    // Procesar los cambios en los comentarios
-    changes.forEach((change) => {
-      const commentId = change.value.comment_id;
-      const postId = change.value.post_id;
-      const senderId = change.value.sender_id;
-      const message = change.value.message;
-      console.log(
-        `New comment ${commentId} on post ${postId} by user ${senderId}: ${message}`,
-      );
-    });
+    if (body.object === 'page') {
+      console.log(body);
+    }
   }
 
   async sendMessage(recipientId: string, message: string) {
