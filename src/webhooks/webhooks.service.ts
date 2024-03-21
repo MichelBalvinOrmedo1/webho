@@ -17,11 +17,10 @@ export class WebhooksService {
       for (const entry of body.entry) {
         if (entry.changes) {
           for (const change of entry.changes) {
-            if (change.field === 'comments' || change.field === 'feed') {
-              //Opciones a Que publiacion quiere;
-              if (change.value.media.id === 'MEDIA_ID') {
-              }
-
+            //Opciones a Que publiacion quiere;
+            //if (change.value.media.id === 'MEDIA_ID') {
+            //}
+            if (change.field === 'feed' || change.field === 'comments') {
               await this.handlePostChange(change, entry.id, body.object);
             }
           }
@@ -85,7 +84,16 @@ export class WebhooksService {
       mensajeEnviado !== webhookEvent.value.from.id &&
       !webhookEvent.value.parent_id
     ) {
-      console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
+      if (typeObject === 'page') {
+        console.log(
+          'Se recibió un evento de comentario:',
+          webhookEvent.value.id,
+        );
+        return await this.callSendAPIComentari(
+          webhookEvent.value.post_id,
+          typeObject,
+        );
+      }
       return await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
     }
   }
