@@ -90,7 +90,7 @@ export class WebhooksService {
           webhookEvent.value.id,
         );
         return await this.callSendAPIComentari(
-          webhookEvent.value.post_id,
+          webhookEvent.value.id,
           typeObject,
         );
       }
