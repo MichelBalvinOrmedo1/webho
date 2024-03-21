@@ -11,9 +11,7 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
-    if (body.object === 'page') {
-      console.log(body);
-    }
+    console.log(body);
   }
 
   async sendMessage(recipientId: string, message: string) {
