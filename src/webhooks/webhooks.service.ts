@@ -86,8 +86,14 @@ export class WebhooksService {
       mensajeEnviado !== webhookEvent.value.from.id &&
       !webhookEvent.value.parent_id
     ) {
-      console.log('Se recibió un evento de comentario:', webhookEvent.value.id);
-      return await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
+      console.log(
+        'Se recibió un evento de comentario:',
+        webhookEvent.value.post_id,
+      );
+      return await this.callSendAPIComentari(
+        webhookEvent.value.post_id,
+        typeObject,
+      );
     }
   }
 
@@ -231,13 +237,16 @@ export class WebhooksService {
     };
 
     try {
-      console.log(typeObject);
-
-      const url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
-      const apiResponse = await axios.post(url, requestBody);
-
+      let url;
+      //instagram
+      if (typeObject === 'instagram') {
+        url = `https://graph.facebook.com/v19.0/${idComentario}/replies?access_token=${PAGE_ACCESS_TOKEN}`;
+      } else if (typeObject === 'page') {
+        url = `https://graph.facebook.com/v19.0/${idComentario}/comments?access_token=${PAGE_ACCESS_TOKEN}`;
+      }
       //Facebook
       //
+      const apiResponse = await axios.post(url, requestBody);
 
       if (apiResponse.data.error) {
         // Si se encuentra un error en la respuesta de la API, manejarlo adecuadamente
