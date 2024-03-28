@@ -12,7 +12,10 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     const webhookEntry = body.entry[0];
-    const webhookEvent = webhookEntry.messaging[0];
+    const webhookEvent = webhookEntry?.messaging[0];
+    const webhookEventFeed = webhookEntry.changes[0];
+    console.log(webhookEventFeed);
+
     const accountId = webhookEntry.id;
 
     if (body.object === 'instagram' || body.object === 'page') {
@@ -22,18 +25,17 @@ export class WebhooksService {
       if (webhookEntry.changes) {
         // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
 
-        for (const change of webhookEntry.changes) {
-          if (change.field === 'comments' || change.field === 'feed') {
-            console.log(change);
-
-            /*if (change.value.media.id === 'MEDIA_ID') {
+        if (
+          webhookEventFeed.field === 'comments' ||
+          webhookEventFeed.field === 'feed'
+        ) {
+          /*if (change.value.media.id === 'MEDIA_ID') {
               }*/
-            return await this.handlePostChange(
-              change,
-              webhookEntry.id,
-              body.object,
-            );
-          }
+          return await this.handlePostChange(
+            webhookEventFeed,
+            accountId,
+            body.object,
+          );
         }
       }
       /*if (webhookEntry.messaging) {
