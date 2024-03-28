@@ -27,7 +27,11 @@ export class WebhooksService {
 
               /*if (change.value.media.id === 'MEDIA_ID') {
               }*/
-              return await this.handlePostChange(change, entry.id, body.object);
+              return await this.handlePostChange(
+                change,
+                '127268922281301',
+                body.object,
+              );
             }
           }
         }
