@@ -85,11 +85,10 @@ export class WebhooksService {
     mensajeEnviado: any,
     typeObject: any,
   ) {
+    console.log('hola');
+
     // Verificar si el cambio se refiere a un comentario
-    if (
-      mensajeEnviado !== webhookEvent.value.from.id &&
-      !webhookEvent.value.parent_id
-    ) {
+    if (mensajeEnviado !== webhookEvent.value.from.id) {
       console.log(
         'Se recibió un evento de comentario:',
         webhookEvent.value.post_id,
