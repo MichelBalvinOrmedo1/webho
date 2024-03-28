@@ -11,51 +11,55 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
-    console.log(JSON.stringify(body));
+    const webhookEntry = body.entry[0];
+    const webhookEvent = webhookEntry.messaging[0];
+    const accountId = webhookEntry.id;
 
     if (body.object === 'instagram' || body.object === 'page') {
-      for (const entry of body.entry) {
-        // Iterar sobre los eventos en la entrada del webhook
-        console.log(entry);
-        // Manejar los eventos de cambios en publicaciones
-        if (entry.changes) {
-          // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
+      // Iterar sobre los eventos en la entrada del webhook
+      console.log(webhookEntry);
+      // Manejar los eventos de cambios en publicaciones
+      if (webhookEntry.changes) {
+        // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
 
-          for (const change of entry.changes) {
-            if (change.field === 'comments' || change.field === 'feed') {
-              console.log(change);
+        for (const change of webhookEntry.changes) {
+          if (change.field === 'comments' || change.field === 'feed') {
+            console.log(change);
 
-              /*if (change.value.media.id === 'MEDIA_ID') {
+            /*if (change.value.media.id === 'MEDIA_ID') {
               }*/
-              return await this.handlePostChange(change, entry.id, body.object);
-            }
-          }
-        }
-        if (entry.messaging) {
-          const webhookEvent = entry.messaging[0];
-          this.logger.log(
-            'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
-          );
-          // Verificar si es un evento de eco
-          if (webhookEvent.is_echo) {
-            break; // Saltar al próximo evento si es un evento de eco
-          }
-          console.log(JSON.stringify(webhookEvent));
-
-          const senderPsid = webhookEvent.sender.id;
-          this.logger.log('PSID del remitente: ' + senderPsid);
-
-          if (webhookEvent.message && !webhookEvent.is_echo) {
-            await this.handleMessage(senderPsid, webhookEvent.message);
-
-            break;
-          } else if (webhookEvent.postback) {
-            await this.handlePostback(senderPsid, webhookEvent.postback);
-          } else {
-            this.logger.log(
-              'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            return await this.handlePostChange(
+              change,
+              webhookEntry.id,
+              body.object,
             );
           }
+        }
+      }
+      if (webhookEntry.messaging) {
+        const webhookEvent = entry.messaging[0];
+        this.logger.log(
+          'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
+        );
+        // Verificar si es un evento de eco
+        if (webhookEvent.is_echo) {
+          break; // Saltar al próximo evento si es un evento de eco
+        }
+        console.log(JSON.stringify(webhookEvent));
+
+        const senderPsid = webhookEvent.sender.id;
+        this.logger.log('PSID del remitente: ' + senderPsid);
+
+        if (webhookEvent.message && !webhookEvent.is_echo) {
+          await this.handleMessage(senderPsid, webhookEvent.message);
+
+          break;
+        } else if (webhookEvent.postback) {
+          await this.handlePostback(senderPsid, webhookEvent.postback);
+        } else {
+          this.logger.log(
+            'Evento no manejado: ' + JSON.stringify(webhookEvent),
+          );
         }
       }
 
