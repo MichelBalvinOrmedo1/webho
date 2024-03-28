@@ -12,7 +12,9 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     const webhookEntry = body.entry[0];
-    const webhookEvent = webhookEntry?.messaging[0];
+    console.log(webhookEntry);
+
+    //const webhookEvent = webhookEntry?.messaging[0];
     const webhookEventFeed = webhookEntry.changes[0];
     console.log(webhookEventFeed);
 
