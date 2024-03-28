@@ -95,7 +95,7 @@ export class WebhooksService {
       );
 
       return await this.callSendAPIComentari(
-        webhookEvent.value.post_id,
+        webhookEvent.value.comment_id,
         typeObject,
       );
     }
