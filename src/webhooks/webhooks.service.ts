@@ -27,11 +27,7 @@ export class WebhooksService {
 
               /*if (change.value.media.id === 'MEDIA_ID') {
               }*/
-              return await this.handlePostChange(
-                change,
-                '127268922281301',
-                body.object,
-              );
+              return await this.handlePostChange(change, entry.id, body.object);
             }
           }
         }
@@ -86,12 +82,11 @@ export class WebhooksService {
   // Manejar el evento de webhook para cambios en las publicaciones
   private async handlePostChange(
     webhookEvent: any,
-    mensajeEnviado: any,
+    mensajeEnviado: string,
     typeObject: any,
   ) {
     console.log('hola');
 
-    // Verificar si el cambio se refiere a un comentario
     if (mensajeEnviado !== webhookEvent.value.from.id) {
       console.log(
         'Se recibió un evento de comentario:',
@@ -102,6 +97,8 @@ export class WebhooksService {
         webhookEvent.value.comment_id,
         typeObject,
       );
+    } else {
+      throw new Error('error');
     }
   }
 
