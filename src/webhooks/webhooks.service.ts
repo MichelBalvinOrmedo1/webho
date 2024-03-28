@@ -12,17 +12,14 @@ export class WebhooksService {
 
   async handleWebhook(body: any) {
     const webhookEntry = body.entry[0];
-    console.log(webhookEntry);
 
     //const webhookEvent = webhookEntry?.messaging[0];
     const webhookEventFeed = webhookEntry.changes[0];
-    console.log(webhookEventFeed);
 
     const accountId = webhookEntry.id;
 
     if (body.object === 'instagram' || body.object === 'page') {
       // Iterar sobre los eventos en la entrada del webhook
-      console.log(webhookEntry);
       // Manejar los eventos de cambios en publicaciones
       if (webhookEntry.changes) {
         if (
@@ -94,10 +91,18 @@ export class WebhooksService {
     if (accountId === webhookEvent.value.from.id)
       throw new BadRequestException();
     console.log(
-      'Se recibió un evento de comentario: ' + webhookEvent.value.post_id,
+      'Se recibió un evento de comentario: ' +
+        (webhookEvent.value?.post_id || webhookEvent?.value.id),
     );
-
-    await this.callSendAPIComentari(webhookEvent.value.comment_id, typeObject);
+    if (typeObject === 'instagram') {
+      await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
+    }
+    if (typeObject === 'page') {
+      await this.callSendAPIComentari(
+        webhookEvent.value.comment_id,
+        typeObject,
+      );
+    }
   }
 
   private async handleMessage(
