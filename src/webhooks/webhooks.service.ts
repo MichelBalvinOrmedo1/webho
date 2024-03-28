@@ -25,8 +25,6 @@ export class WebhooksService {
       console.log(webhookEntry);
       // Manejar los eventos de cambios en publicaciones
       if (webhookEntry.changes) {
-        // Definir una variable de estado para rastrear si se ha enviado un mensaje en respuesta al comentario
-
         if (
           webhookEventFeed.field === 'comments' ||
           webhookEventFeed.field === 'feed'
@@ -90,24 +88,16 @@ export class WebhooksService {
   // Manejar el evento de webhook para cambios en las publicaciones
   private async handlePostChange(
     webhookEvent: any,
-    mensajeEnviado: string,
+    accountId: string,
     typeObject: any,
   ) {
-    console.log('hola');
+    if (accountId === webhookEvent.value.from.id)
+      throw new BadRequestException();
+    console.log(
+      'Se recibió un evento de comentario: ' + webhookEvent.value.post_id,
+    );
 
-    if (mensajeEnviado !== webhookEvent.value.from.id) {
-      console.log(
-        'Se recibió un evento de comentario:',
-        webhookEvent.value.post_id,
-      );
-
-      return await this.callSendAPIComentari(
-        webhookEvent.value.comment_id,
-        typeObject,
-      );
-    } else {
-      throw new Error('error');
-    }
+    await this.callSendAPIComentari(webhookEvent.value.comment_id, typeObject);
   }
 
   private async handleMessage(
