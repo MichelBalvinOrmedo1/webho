@@ -36,7 +36,7 @@ export class WebhooksService {
           }
         }
       }
-      if (webhookEntry.messaging) {
+      /*if (webhookEntry.messaging) {
         const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
@@ -63,7 +63,7 @@ export class WebhooksService {
         }
       }
 
-      return;
+      return;*/
     } else {
       this.logger.log('Tipo de objeto no admitido: ' + body.object);
       return 'OBJETO_NO_ADMITIDO';
