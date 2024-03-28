@@ -25,8 +25,8 @@ export class WebhooksService {
             if (change.field === 'comments' || change.field === 'feed') {
               console.log(change);
 
-              if (change.value.media.id === 'MEDIA_ID') {
-              }
+              /*if (change.value.media.id === 'MEDIA_ID') {
+              }*/
               await this.handlePostChange(change, entry.id, body.object);
             }
           }
@@ -94,7 +94,10 @@ export class WebhooksService {
         'Se recibió un evento de comentario:',
         webhookEvent.value.post_id,
       );
-      return await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
+      return await this.callSendAPIComentari(
+        webhookEvent.value.post_id,
+        typeObject,
+      );
     }
   }
 
