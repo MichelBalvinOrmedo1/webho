@@ -13,15 +13,15 @@ export class WebhooksService {
   async handleWebhook(body: any) {
     const webhookEntry = body.entry[0];
 
-    //const webhookEvent = webhookEntry?.messaging[0];
-    const webhookEventFeed = webhookEntry.changes[0];
+    const webhookEvent = webhookEntry?.messaging[0];
+    const webhookEventFeed = webhookEntry?.changes[0];
 
     const accountId = webhookEntry.id;
 
     if (body.object === 'instagram' || body.object === 'page') {
       // Iterar sobre los eventos en la entrada del webhook
       // Manejar los eventos de cambios en publicaciones
-      if (webhookEntry.changes) {
+      if (webhookEntry?.changes) {
         if (
           webhookEventFeed.field === 'comments' ||
           webhookEventFeed.field === 'feed'
@@ -36,14 +36,10 @@ export class WebhooksService {
         }
       }
       if (webhookEntry.messaging) {
-        const webhookEvent = entry.messaging[0];
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
         );
-        // Verificar si es un evento de eco
-        if (webhookEvent.is_echo) {
-          break; // Saltar al próximo evento si es un evento de eco
-        }
+
         console.log(JSON.stringify(webhookEvent));
 
         const senderPsid = webhookEvent.sender.id;
