@@ -11,55 +11,52 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
-    const webhookEntry = body.entry[0];
-
-    const webhookEvent = webhookEntry?.messaging[0];
-    console.log(webhookEvent);
-
-    const webhookEventFeed = webhookEntry?.changes[0];
-
-    const accountId = webhookEntry.id;
-
     if (body.object === 'instagram' || body.object === 'page') {
       // Iterar sobre los eventos en la entrada del webhook
       // Manejar los eventos de cambios en publicaciones
-      if (webhookEntry?.changes) {
-        if (
-          webhookEventFeed.field === 'comments' ||
-          webhookEventFeed.field === 'feed'
-        ) {
-          /*if (change.value.media.id === 'MEDIA_ID') {
+      for (const entry of body.entry) {
+        const webhookEntry = body.entry[0];
+        const accountId = webhookEntry.id;
+        if (webhookEntry.changes) {
+          const webhookEventFeed = webhookEntry.changes[0];
+
+          if (
+            webhookEventFeed.field === 'comments' ||
+            webhookEventFeed.field === 'feed'
+          ) {
+            /*if (change.value.media.id === 'MEDIA_ID') {
               }*/
-          return await this.handlePostChange(
-            webhookEventFeed,
-            accountId,
-            body.object,
-          );
+            return await this.handlePostChange(
+              webhookEventFeed,
+              accountId,
+              body.object,
+            );
+          }
         }
-      }
-      if (webhookEntry.messaging) {
-        console.log(webhookEntry.messaging[1]);
-
-        this.logger.log(
-          'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
-        );
-
-        console.log(JSON.stringify(webhookEvent));
-
-        const senderPsid = webhookEvent.sender.id;
-        this.logger.log('PSID del remitente: ' + senderPsid);
-
-        if (webhookEvent.message && !webhookEvent.is_echo) {
-          await this.handleMessage(senderPsid, webhookEvent.message);
-        } else if (webhookEvent.postback) {
-          await this.handlePostback(senderPsid, webhookEvent.postback);
-        } else {
+        if (webhookEntry.messaging) {
+          const webhookEvent = entry.messaging[0];
           this.logger.log(
-            'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
           );
+          // Verificar si es un evento de eco
+          if (webhookEvent.is_echo) {
+          }
+          console.log(JSON.stringify(webhookEvent));
+
+          const senderPsid = webhookEvent.sender.id;
+          this.logger.log('PSID del remitente: ' + senderPsid);
+
+          if (webhookEvent.message && !webhookEvent.is_echo) {
+            await this.handleMessage(senderPsid, webhookEvent.message);
+          } else if (webhookEvent.postback) {
+            await this.handlePostback(senderPsid, webhookEvent.postback);
+          } else {
+            this.logger.log(
+              'Evento no manejado: ' + JSON.stringify(webhookEvent),
+            );
+          }
         }
       }
-
       return;
     } else {
       this.logger.log('Tipo de objeto no admitido: ' + body.object);
