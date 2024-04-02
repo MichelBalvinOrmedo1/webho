@@ -14,6 +14,8 @@ export class WebhooksService {
     const webhookEntry = body.entry[0];
 
     const webhookEvent = webhookEntry?.messaging[0];
+    console.log(webhookEvent);
+
     const webhookEventFeed = webhookEntry?.changes[0];
 
     const accountId = webhookEntry.id;
