@@ -76,7 +76,7 @@ function Default_actionGenery(
 }
 
 // Definir un botón de tipo postback
-const postbackButton = createButtonPostBack('Ver detalles', 'btn1');
+const postbackButton = createButtonPostBack('Ver detalles', 'inf');
 
 // Definir un botón de tipo URL
 const urlButton = createButtonUrl(
