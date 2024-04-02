@@ -38,6 +38,8 @@ export class WebhooksService {
         }
       }
       if (webhookEntry.messaging) {
+        console.log(webhookEntry.messaging[1]);
+
         this.logger.log(
           'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
         );
