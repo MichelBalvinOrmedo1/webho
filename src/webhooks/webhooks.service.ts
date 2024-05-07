@@ -11,53 +11,16 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
-    console.log(body);
+    console.log(JSON.stringify(body));
     
-    if (body.object === 'instagram' || body.object === 'page') {
+    
+    if (body.object === 'page') {
       // Iterar sobre los eventos en la entrada del webhook
       // Manejar los eventos de cambios en publicaciones
       for (const entry of body.entry) {
         const webhookEntry = body.entry[0];
         const accountId = webhookEntry.id;
-        if (webhookEntry.changes) {
-          const webhookEventFeed = webhookEntry.changes[0];
-
-          if (
-            webhookEventFeed.field === 'comments' ||
-            webhookEventFeed.field === 'feed'
-          ) {
-            /*if (change.value.media.id === 'MEDIA_ID') {
-              }*/
-            return await this.handlePostChange(
-              webhookEventFeed,
-              accountId,
-              body.object,
-            );
-          }
-        }
-        if (webhookEntry.messaging) {
-          const webhookEvent = entry.messaging[0];
-          this.logger.log(
-            'Evento de webhook recibido: ' + JSON.stringify(webhookEvent),
-          );
-          // Verificar si es un evento de eco
-          if (webhookEvent.is_echo) {
-          }
-          console.log(JSON.stringify(webhookEvent));
-
-          const senderPsid = webhookEvent.sender.id;
-          this.logger.log('PSID del remitente: ' + senderPsid);
-
-          if (webhookEvent.message && !webhookEvent.is_echo) {
-            await this.handleMessage(senderPsid, webhookEvent.message);
-          } else if (webhookEvent.postback) {
-            await this.handlePostback(senderPsid, webhookEvent.postback);
-          } else {
-            this.logger.log(
-              'Evento no manejado: ' + JSON.stringify(webhookEvent),
-            );
-          }
-        }
+        
       }
       return;
     } else {
@@ -66,135 +29,8 @@ export class WebhooksService {
     }
   }
 
-  async sendMessage(recipientId: string, message: string) {
-    const response = { text: message };
-    await this.callSendAPI(recipientId, response);
-  }
-  async handleOpenThreadReferral(senderPsid: string, referral: any) {
-    const refParam = referral.ref;
-    // Aquí puedes personalizar la respuesta según el valor de refParam
-    if (refParam === 'prom') {
-      await this.sendMessage(senderPsid, 'Todas las promociones disponibles');
-    } else {
-      await this.sendMessage(senderPsid, '¡Hola! ¿En qué puedo ayudarte hoy?');
-    }
-  }
-  // Manejar el evento de webhook para cambios en las publicaciones
-  private async handlePostChange(
-    webhookEvent: any,
-    accountId: string,
-    typeObject: any,
-  ) {
-    if (accountId === webhookEvent.value.from.id)
-      throw new BadRequestException();
-    console.log(
-      'Se recibió un evento de comentario: ' +
-        (webhookEvent.value?.post_id || webhookEvent?.value.id),
-    );
-    if (typeObject === 'instagram') {
-      await this.callSendAPIComentari(webhookEvent.value.id, typeObject);
-    }
-    if (typeObject === 'page') {
-      await this.callSendAPIComentari(
-        webhookEvent.value.comment_id,
-        typeObject,
-      );
-    }
-  }
 
-  private async handleMessage(
-    senderPsid: string,
-    receivedMessage: any,
-  ): Promise<any> {
-    let response;
-    const responseHist = receivedMessage.reply_to !== undefined;
-
-    if (receivedMessage.text && !responseHist && !receivedMessage.is_echo) {
-      response = genericTemplate;
-      await this.callSendAPI(senderPsid, response);
-    } else if (responseHist) {
-      response = responseHistory(
-        receivedMessage.reply_to.story.id, // obtiene el id del historie que le respondio al usuario
-        receivedMessage.text, // Palabra que mando el usuario
-        ['hola'], // Palabras claves
-        '18096464938399091', // Id del historial seleccionada
-      );
-    } else {
-      return null;
-    }
-
-    return;
-  }
-
-  private async handlePostback(senderPsid: string, receivedPostback: any) {
-    let response;
-    const payload = receivedPostback.payload;
-    console.log('se ejecuto este metodo');
-
-    if (payload === 'inf') {
-      response = { text: 'Esto es la informacion' };
-    }
-    if (payload === 'pedido') {
-      response = { text: 'EStos son los pedidos disponible' };
-    }
-    if (payload === 'prom') {
-      response = { text: 'Todas las promociones disponibles' };
-    }
-
-    await this.callSendAPI(senderPsid, response);
-  }
-
-  async sendIceBreakers() {
-    const iceBreakers = [
-      {
-        question: '¿Cómo puedo ayudarte?',
-        payload: 'ayuda',
-      },
-      {
-        question: '¿Qué tipo de información estás buscando?',
-        payload: 'informacion',
-      },
-    ];
-    try {
-      const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-      if (!PAGE_ACCESS_TOKEN) {
-        throw new Error('Error: PAGE_ACCESS_TOKEN no está configurado.');
-      }
-
-      const requestBody = {
-        platform: 'instagram',
-        ice_breakers: iceBreakers,
-      };
-
-      const url = `https://graph.facebook.com/v12.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`;
-      const apiResponse = await axios.post(url, requestBody);
-      console.log('Ice Breakers enviado:', apiResponse.data);
-    } catch (error) {
-      console.error('Error al enviar Ice Breakers:', error);
-    }
-  }
-
-  async deleteBrek() {
-    const fields = ['ice_breakers'];
-
-    try {
-      const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-      if (!PAGE_ACCESS_TOKEN) {
-        throw new Error('Error: PAGE_ACCESS_TOKEN no está configurado.');
-      }
-
-      const requestBody = {
-        fields: fields,
-      };
-
-      const url = `https://graph.facebook.com/v12.0/me/messenger_profile?access_token=${PAGE_ACCESS_TOKEN}`;
-      const apiResponse = await axios.delete(url, { data: requestBody }); // Usa { data: requestBody } para enviar datos en el cuerpo de la solicitud DELETE
-      console.log('Ice Breakers eliminados:', apiResponse.data);
-    } catch (error) {
-      console.error('Error al eliminar Ice Breakers:', error);
-    }
-  }
-
+ 
   private async callSendAPI(senderPsid: string, response: object) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
@@ -229,6 +65,9 @@ export class WebhooksService {
       this.logger.error('Error al enviar el mensaje:', error);
     }
   }
+
+
+
   private async callSendAPIComentari(idComentario: string, typeObject: string) {
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
