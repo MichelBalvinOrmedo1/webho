@@ -11,6 +11,8 @@ export class WebhooksService {
   private readonly logger = new Logger(WebhooksService.name);
 
   async handleWebhook(body: any) {
+    console.log(body);
+    
     if (body.object === 'instagram' || body.object === 'page') {
       // Iterar sobre los eventos en la entrada del webhook
       // Manejar los eventos de cambios en publicaciones
